@@ -20,19 +20,29 @@ import React, { useEffect, useState } from "react";
 
 // reactstrap components
 import {
+  Button,
   Card,
   CardHeader,
   CardBody,
   CardTitle,
-  Table,
+  FormGroup,
+  Form,
+  Input,
+  Label,
   Row,
   Col,
-  Button,
+  Table,
 } from "reactstrap";
 import firebase from "../firebase";
 
 function Tables() {
   const [students, setStudents] = useState([]);
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [gender, setGender] = useState("");
+  const [seatno, setSeatno] = useState("");
+  const [rollno, setRollno] = useState("");
+  const [standard, setStandard] = useState("");
 
   const ref = firebase.firestore().collection("students");
 
@@ -59,9 +69,121 @@ function Tables() {
       });
   }
 
+  function editStudent(updatedStudent) {
+    ref
+      .doc(updatedStudent.id)
+      .update(updatedStudent)
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
   return (
     <>
       <div className="content">
+        <Card className="card-user">
+          <CardHeader>
+            <CardTitle tag="h5">Edit Student</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Form action="/tables">
+              <Row>
+                <Col className="pr-1 pl-1" md="6">
+                  <FormGroup>
+                    <label>First Name</label>
+                    <Input
+                      placeholder="Firstname"
+                      type="text"
+                      value={firstname}
+                      onChange={(e) => setFirstname(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col className="pl-1 pr-1" md="6">
+                  <FormGroup>
+                    <label>Last Name</label>
+                    <Input
+                      placeholder="Last Name"
+                      type="text"
+                      value={lastname}
+                      onChange={(e) => setLastname(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col className="pl-1 pr-1" md="4">
+                  <FormGroup>
+                    <label>Select Gender</label>
+                    <Input
+                      defaultValue="Select Gender"
+                      placeholder="Select Gender"
+                      type="select"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                    >
+                      <option>Select Gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col className="pl-1 pr-1" md="4">
+                  <FormGroup>
+                    <label>Seat Number</label>
+                    <Input
+                      placeholder="Seat Number"
+                      type="number"
+                      value={seatno}
+                      onChange={(e) => setSeatno(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col className="pl-1 pr-1" md="4">
+                  <FormGroup>
+                    <label>Roll Number</label>
+                    <Input
+                      placeholder="Roll Number"
+                      type="number"
+                      value={rollno}
+                      onChange={(e) => setRollno(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col className="pl-1 pr-1" md="4">
+                  <FormGroup check>
+                    <Label check>
+                      <Input
+                        type="radio"
+                        name="radio1"
+                        value="11th"
+                        onChange={(e) => setStandard(e.target.value)}
+                      />
+                      11th Standard Student
+                    </Label>
+                  </FormGroup>
+                </Col>
+                <Col>
+                  <FormGroup check>
+                    <Label check>
+                      <Input
+                        type="radio"
+                        name="radio1"
+                        value="12th"
+                        onChange={(e) => setStandard(e.target.value)}
+                      />
+                      12th Standard Student
+                    </Label>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row></Row>
+            </Form>
+          </CardBody>
+        </Card>
+
         <Row>
           <Col md="12">
             <Card>
@@ -79,6 +201,7 @@ function Tables() {
                       <th>Last Name</th>
                       <th>Gender</th>
                       <th>Roll Number</th>
+                      <th className="text-center">Edit Student</th>
                       <th className="text-center">Remove Student</th>
                     </tr>
                   </thead>
@@ -94,6 +217,25 @@ function Tables() {
                           <Button
                             className="btn-round"
                             color="primary"
+                            onClick={() =>
+                              editStudent({
+                                firstname,
+                                lastname,
+                                seatno,
+                                rollno,
+                                gender,
+                                standard,
+                                id: student.id,
+                              })
+                            }
+                          >
+                            Edit
+                          </Button>
+                        </td>
+                        <td className="text-center">
+                          <Button
+                            className="btn-round"
+                            color="danger"
                             onClick={() => deleteStudent(student)}
                           >
                             Remove

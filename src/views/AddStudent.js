@@ -144,7 +144,7 @@ function AddUser() {
                         name="radio1"
                         value="11th"
                         onChange={(e) => setStandard(e.target.value)}
-                      />{" "}
+                      />
                       11th Standard Student
                     </Label>
                   </FormGroup>
@@ -157,7 +157,7 @@ function AddUser() {
                         name="radio1"
                         value="12th"
                         onChange={(e) => setStandard(e.target.value)}
-                      />{" "}
+                      />
                       12th Standard Student
                     </Label>
                   </FormGroup>
