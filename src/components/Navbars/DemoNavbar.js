@@ -17,24 +17,7 @@
 
 */
 import React from "react";
-import { Link } from "react-router-dom";
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Container,
-  InputGroup,
-  InputGroupText,
-  InputGroupAddon,
-  Input,
-} from "reactstrap";
+import { Navbar, NavbarBrand, Container } from "reactstrap";
 
 import routes from "routes.js";
 
@@ -46,8 +29,6 @@ class Header extends React.Component {
       dropdownOpen: false,
       color: "transparent",
     };
-    this.toggle = this.toggle.bind(this);
-    this.dropdownToggle = this.dropdownToggle.bind(this);
     this.sidebarToggle = React.createRef();
   }
   toggle() {
@@ -62,11 +43,6 @@ class Header extends React.Component {
     }
     this.setState({
       isOpen: !this.state.isOpen,
-    });
-  }
-  dropdownToggle(e) {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen,
     });
   }
   getBrand() {
@@ -141,62 +117,6 @@ class Header extends React.Component {
             </div>
             <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
           </div>
-          <NavbarToggler onClick={this.toggle}>
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-            <span className="navbar-toggler-bar navbar-kebab" />
-          </NavbarToggler>
-          <Collapse
-            isOpen={this.state.isOpen}
-            navbar
-            className="justify-content-end"
-          >
-            <form>
-              <InputGroup className="no-border">
-                <Input placeholder="Search..." />
-                <InputGroupAddon addonType="append">
-                  <InputGroupText>
-                    <i className="nc-icon nc-zoom-split" />
-                  </InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-            </form>
-            <Nav navbar>
-              <NavItem>
-                <Link to="#pablo" className="nav-link btn-magnify">
-                  <i className="nc-icon nc-layout-11" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Stats</span>
-                  </p>
-                </Link>
-              </NavItem>
-              <Dropdown
-                nav
-                isOpen={this.state.dropdownOpen}
-                toggle={(e) => this.dropdownToggle(e)}
-              >
-                <DropdownToggle caret nav>
-                  <i className="nc-icon nc-bell-55" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Some Actions</span>
-                  </p>
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem tag="a">Action</DropdownItem>
-                  <DropdownItem tag="a">Another Action</DropdownItem>
-                  <DropdownItem tag="a">Something else here</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-              <NavItem>
-                <Link to="#pablo" className="nav-link btn-rotate">
-                  <i className="nc-icon nc-settings-gear-65" />
-                  <p>
-                    <span className="d-lg-none d-md-block">Account</span>
-                  </p>
-                </Link>
-              </NavItem>
-            </Nav>
-          </Collapse>
         </Container>
       </Navbar>
     );

@@ -37,7 +37,7 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/user-page",
+    path: "/addstudent",
     name: "Add Student",
     icon: "nc-icon nc-single-02",
     component: AddStudent,

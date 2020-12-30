@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // reactstrap components
 import {
@@ -27,82 +27,89 @@ import {
   Table,
   Row,
   Col,
+  Button,
 } from "reactstrap";
+import firebase from "../firebase";
 
-class Tables extends React.Component {
-  render() {
-    return (
-      <>
-        <div className="content">
-          <Row>
-            <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h4">Student Table</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <Table responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th>Country</th>
-                        <th>City</th>
-                        <th className="text-right">Salary</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Dakota Rice</td>
-                        <td>Niger</td>
-                        <td>Oud-Turnhout</td>
-                        <td className="text-right">$36,738</td>
-                      </tr>
-                      <tr>
-                        <td>Minerva Hooper</td>
-                        <td>Curaçao</td>
-                        <td>Sinaai-Waas</td>
-                        <td className="text-right">$23,789</td>
-                      </tr>
-                      <tr>
-                        <td>Sage Rodriguez</td>
-                        <td>Netherlands</td>
-                        <td>Baileux</td>
-                        <td className="text-right">$56,142</td>
-                      </tr>
-                      <tr>
-                        <td>Philip Chaney</td>
-                        <td>Korea, South</td>
-                        <td>Overland Park</td>
-                        <td className="text-right">$38,735</td>
-                      </tr>
-                      <tr>
-                        <td>Doris Greene</td>
-                        <td>Malawi</td>
-                        <td>Feldkirchen in Kärnten</td>
-                        <td className="text-right">$63,542</td>
-                      </tr>
-                      <tr>
-                        <td>Mason Porter</td>
-                        <td>Chile</td>
-                        <td>Gloucester</td>
-                        <td className="text-right">$78,615</td>
-                      </tr>
-                      <tr>
-                        <td>Jon Porter</td>
-                        <td>Portugal</td>
-                        <td>Gloucester</td>
-                        <td className="text-right">$98,615</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      </>
-    );
+function Tables() {
+  const [students, setStudents] = useState([]);
+
+  const ref = firebase.firestore().collection("students");
+
+  function getStudents() {
+    ref.onSnapshot((querySnapshot) => {
+      const items = [];
+      querySnapshot.forEach((doc) => {
+        items.push(doc.data());
+      });
+      setStudents(items);
+    });
   }
+
+  useEffect(() => {
+    getStudents();
+  });
+
+  function deleteStudent(student) {
+    ref
+      .doc(student.id)
+      .delete()
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  return (
+    <>
+      <div className="content">
+        <Row>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4" className="text-center">
+                  All Students Table
+                </CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Seat Number</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Gender</th>
+                      <th>Roll Number</th>
+                      <th className="text-center">Remove Student</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr>
+                        <td>{student.seatno}</td>
+                        <td>{student.firstname}</td>
+                        <td>{student.lastname}</td>
+                        <td>{student.gender}</td>
+                        <td>{student.rollno}</td>
+                        <td className="text-center">
+                          <Button
+                            className="btn-round"
+                            color="primary"
+                            onClick={() => deleteStudent(student)}
+                          >
+                            Remove
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </>
+  );
 }
 
 export default Tables;
