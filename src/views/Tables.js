@@ -23,8 +23,12 @@ import {
   Button,
   Card,
   CardHeader,
+  ModalHeader,
   CardBody,
+  ModalBody,
   CardTitle,
+  ModalFooter,
+  Modal,
   FormGroup,
   Form,
   Input,
@@ -43,11 +47,14 @@ function Tables() {
   const [seatno, setSeatno] = useState("");
   const [rollno, setRollno] = useState("");
   const [standard, setStandard] = useState("");
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
 
   const ref = firebase.firestore().collection("students");
 
   function getStudents() {
-    ref.onSnapshot((querySnapshot) => {
+    ref.orderBy("firstname", "asc").onSnapshot((querySnapshot) => {
       const items = [];
       querySnapshot.forEach((doc) => {
         items.push(doc.data());
@@ -73,6 +80,7 @@ function Tables() {
     ref
       .doc(updatedStudent.id)
       .update(updatedStudent)
+      .then(toggle)
       .catch((err) => {
         console.error(err);
       });
@@ -80,12 +88,10 @@ function Tables() {
 
   return (
     <>
-      <div className="content">
-        <Card className="card-user">
-          <CardHeader>
-            <CardTitle tag="h5">Edit Student</CardTitle>
-          </CardHeader>
-          <CardBody>
+      <div className="modal__container">
+        <Modal isOpen={modal} toggle={toggle}>
+          <ModalHeader toggle={toggle}>Edit Student</ModalHeader>
+          <ModalBody>
             <Form action="/tables">
               <Row>
                 <Col className="pr-1 pl-1" md="6">
@@ -152,7 +158,7 @@ function Tables() {
                 </Col>
               </Row>
               <Row>
-                <Col className="pl-1 pr-1" md="4">
+                <Col className="pl-1 pr-1" md="6">
                   <FormGroup check>
                     <Label check>
                       <Input
@@ -165,7 +171,7 @@ function Tables() {
                     </Label>
                   </FormGroup>
                 </Col>
-                <Col>
+                <Col className="pl-1 pr-1" md="6">
                   <FormGroup check>
                     <Label check>
                       <Input
@@ -179,11 +185,40 @@ function Tables() {
                   </FormGroup>
                 </Col>
               </Row>
-              <Row></Row>
             </Form>
-          </CardBody>
-        </Card>
+          </ModalBody>
+          <ModalFooter>
+            {students.map((student) => (
+              <tr>
+                <td className="text-center">
+                  <Button
+                    className="btn-round"
+                    color="primary"
+                    onClick={() =>
+                      editStudent({
+                        firstname,
+                        lastname,
+                        seatno,
+                        rollno,
+                        gender,
+                        standard,
+                        id: student.id,
+                      })
+                    }
+                  >
+                    Edit
+                  </Button>
+                </td>
+              </tr>
+            ))}
+            <Button className="btn-round" color="secondary" onClick={toggle}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
 
+      <div className="content">
         <Row>
           <Col md="12">
             <Card>
@@ -196,11 +231,11 @@ function Tables() {
                 <Table responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Seat Number</th>
                       <th>First Name</th>
                       <th>Last Name</th>
                       <th>Gender</th>
                       <th>Roll Number</th>
+                      <th>Seat Number</th>
                       <th className="text-center">Edit Student</th>
                       <th className="text-center">Remove Student</th>
                     </tr>
@@ -208,12 +243,23 @@ function Tables() {
                   <tbody>
                     {students.map((student) => (
                       <tr>
-                        <td>{student.seatno}</td>
                         <td>{student.firstname}</td>
                         <td>{student.lastname}</td>
                         <td>{student.gender}</td>
                         <td>{student.rollno}</td>
+                        <td>{student.seatno}</td>
                         <td className="text-center">
+                          <Button
+                            className="btn-round"
+                            color="primary"
+                            onClick={() =>
+                              editStudent({
+                                id: student.id,
+                              })
+                            }
+                          >
+                            Edit
+                          </Button>
                           <Button
                             className="btn-round"
                             color="primary"
