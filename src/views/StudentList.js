@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 
 // reactstrap components
 import firebase from "firebase/app";
-import StudentsTable from "./StudentTable";
+import StudentsTable from "../components/CustomComponents/StudentTable";
 
 function StudentList() {
   const [students, setStudents] = useState([]);
