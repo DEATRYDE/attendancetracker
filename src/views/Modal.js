@@ -16,15 +16,25 @@ import {
 function CustomModal(props) {
   const { buttonLabel } = props;
 
-  const [students, setStudents] = useState([]);
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [gender, setGender] = useState("");
-  const [seatno, setSeatno] = useState("");
-  const [rollno, setRollno] = useState("");
-  const [standard, setStandard] = useState("");
+  const modalInitialValues = {
+    firstname: "",
+    lastname: "",
+    gender: "",
+    seatno: "",
+    rollno: "",
+    standard: "",
+  };
+
+  const [values, setValues] = useState({ ...modalInitialValues });
 
   const [modal, setModal] = useState(false);
+
+  const onChange = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const toggle = () => setModal(!modal);
 
@@ -36,7 +46,7 @@ function CustomModal(props) {
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Edit Student</ModalHeader>
         <ModalBody>
-          <Form action="/tables">
+          <Form action="/tables" onSubmit={toggle}>
             <Row>
               <Col className="pr-1 pl-1" md="6">
                 <FormGroup>
@@ -44,8 +54,9 @@ function CustomModal(props) {
                   <Input
                     placeholder="Firstname"
                     type="text"
-                    value={firstname}
-                    onChange={(e) => setFirstname(e.target.value)}
+                    value={values.firstname}
+                    onChange={onChange}
+                    name="firstname"
                   />
                 </FormGroup>
               </Col>
@@ -55,8 +66,9 @@ function CustomModal(props) {
                   <Input
                     placeholder="Last Name"
                     type="text"
-                    value={lastname}
-                    onChange={(e) => setLastname(e.target.value)}
+                    value={values.lastname}
+                    onChange={onChange}
+                    name="lastname"
                   />
                 </FormGroup>
               </Col>
@@ -69,8 +81,9 @@ function CustomModal(props) {
                     defaultValue="Select Gender"
                     placeholder="Select Gender"
                     type="select"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
+                    value={values.gender}
+                    onChange={onChange}
+                    name="gender"
                   >
                     <option>Select Gender</option>
                     <option>Male</option>
@@ -84,8 +97,9 @@ function CustomModal(props) {
                   <Input
                     placeholder="Seat Number"
                     type="number"
-                    value={seatno}
-                    onChange={(e) => setSeatno(e.target.value)}
+                    value={values.seatno}
+                    onChange={onChange}
+                    name="seatno"
                   />
                 </FormGroup>
               </Col>
@@ -95,8 +109,9 @@ function CustomModal(props) {
                   <Input
                     placeholder="Roll Number"
                     type="number"
-                    value={rollno}
-                    onChange={(e) => setRollno(e.target.value)}
+                    value={values.rollno}
+                    onChange={onChange}
+                    name="rollno"
                   />
                 </FormGroup>
               </Col>
@@ -107,9 +122,9 @@ function CustomModal(props) {
                   <Label check>
                     <Input
                       type="radio"
-                      name="radio1"
+                      name="standard"
                       value="11th"
-                      onChange={(e) => setStandard(e.target.value)}
+                      onChange={onChange}
                     />
                     11th Standard Student
                   </Label>
@@ -120,9 +135,9 @@ function CustomModal(props) {
                   <Label check>
                     <Input
                       type="radio"
-                      name="radio1"
+                      name="standard"
                       value="12th"
-                      onChange={(e) => setStandard(e.target.value)}
+                      onChange={onChange}
                     />
                     12th Standard Student
                   </Label>
@@ -132,15 +147,18 @@ function CustomModal(props) {
           </Form>
         </ModalBody>
         <ModalFooter>
-          {students.map((student) => (
-            <tr>
-              <td className="text-center">
-                <Button className="btn-round" color="primary" onClick={toggle}>
-                  Edit
-                </Button>
-              </td>
-            </tr>
-          ))}
+          <tr>
+            <td className="text-center">
+              <Button
+                type="submit"
+                className="btn-round"
+                color="primary"
+                onClick={toggle}
+              >
+                Edit
+              </Button>
+            </td>
+          </tr>
           <Button className="btn-round" color="secondary" onClick={toggle}>
             Cancel
           </Button>

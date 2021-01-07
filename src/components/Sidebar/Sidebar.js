@@ -21,8 +21,6 @@ import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 
-import logo from "logo.svg";
-
 var ps;
 
 class Sidebar extends React.Component {
@@ -58,7 +56,12 @@ class Sidebar extends React.Component {
         <div className="logo">
           <a href="/dashboard" className="simple-text logo-mini">
             <div className="logo-img">
-              <img src={logo} alt="react-logo" />
+              <img
+                src={
+                  "https://www.flaticon.com/premium-icon/icons/svg/2436/2436683.svg"
+                }
+                alt="react-logo"
+              />
             </div>
           </a>
           <a href="/dashboard" className="simple-text logo-normal">

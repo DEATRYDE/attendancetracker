@@ -18,7 +18,7 @@
 */
 import DailyAttendance from "views/DailyAttendance";
 import Dashboard from "views/Dashboard.js";
-import TableList from "views/Tables.js";
+import StudentList from "views/StudentList.js";
 import AddStudent from "views/AddStudent.js";
 
 var routes = [
@@ -47,7 +47,7 @@ var routes = [
     path: "/tables",
     name: "Student List",
     icon: "nc-icon nc-tile-56",
-    component: TableList,
+    component: StudentList,
     layout: "/admin",
   },
 ];
