@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DisplayCard from "../components/CustomComponents/DisplayCard";
-import firebase from "../firebase";
+import firebase from "firebase/app";
 
 const DailyAttendance = () => {
   const [dates, setDates] = useState([]);

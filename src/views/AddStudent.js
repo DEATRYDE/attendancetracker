@@ -32,164 +32,173 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { useHistory } from "react-router-dom";
-import firebase from "../firebase";
-import { v4 as uuidv4 } from "uuid";
+import firebase from "firebase/app";
 
-function AddUser() {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [gender, setGender] = useState("");
-  const [seatno, setSeatno] = useState("");
-  const [rollno, setRollno] = useState("");
-  const [standard, setStandard] = useState("");
+function AddStudent() {
+  const db = firebase.firestore();
 
-  let history = useHistory();
-
-  const redirect = () => {
-    history.push("/admin/tables");
+  const initialValues = {
+    firstname: "",
+    lastname: "",
+    gender: "",
+    seatno: "",
+    rollno: "",
+    standard: "",
   };
 
-  const ref = firebase.firestore().collection("students");
+  const [student, setStudent] = useState({ ...initialValues });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  function addStudent(newStudent) {
-    ref
-      .doc(newStudent.id)
-      .set(newStudent)
-      .then(redirect)
-      .catch((err) => {
-        console.error(err);
+  const onChange = (e) => {
+    setStudent({
+      ...student,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    console.log(student);
+    setLoading(true);
+    try {
+      const docRef = await db.collection("students").add({
+        ...student,
+        seatno: parseInt(student.seatno),
+        rollno: parseInt(student.rollno),
       });
-  }
+      console.log(docRef.id);
+      setStudent({ ...initialValues });
+    } catch (error) {
+      console.error("An error has occured", error);
+      setError("An error occured while trying to save the student");
+    }
+    setLoading(false);
+  };
 
   return (
-    <>
-      <div className="content">
-        <Card className="card-user">
-          <CardHeader>
-            <CardTitle tag="h5">Add Student</CardTitle>
-          </CardHeader>
-          <CardBody>
-            <Form action="/tables">
-              <Row>
-                <Col className="pr-1 pl-1" md="6">
-                  <FormGroup>
-                    <label>First Name</label>
-                    <Input
-                      placeholder="Firstname"
-                      type="text"
-                      value={firstname}
-                      onChange={(e) => setFirstname(e.target.value)}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col className="pl-1 pr-1" md="6">
-                  <FormGroup>
-                    <label>Last Name</label>
-                    <Input
-                      placeholder="Last Name"
-                      type="text"
-                      value={lastname}
-                      onChange={(e) => setLastname(e.target.value)}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="pl-1 pr-1" md="4">
-                  <FormGroup>
-                    <label>Select Gender</label>
-                    <Input
-                      defaultValue="Select Gender"
-                      placeholder="Select Gender"
-                      type="select"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                    >
-                      <option>Select Gender</option>
-                      <option>Male</option>
-                      <option>Female</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col className="pl-1 pr-1" md="4">
-                  <FormGroup>
-                    <label>Seat Number</label>
-                    <Input
-                      placeholder="Seat Number"
-                      type="number"
-                      value={seatno}
-                      onChange={(e) => setSeatno(e.target.value)}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col className="pl-1 pr-1" md="4">
-                  <FormGroup>
-                    <label>Roll Number</label>
-                    <Input
-                      placeholder="Roll Number"
-                      type="number"
-                      value={rollno}
-                      onChange={(e) => setRollno(e.target.value)}
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="pl-1 pr-1" md="4">
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type="radio"
-                        name="radio1"
-                        value="11th"
-                        onChange={(e) => setStandard(e.target.value)}
-                      />
-                      11th Standard Student
-                    </Label>
-                  </FormGroup>
-                </Col>
-                <Col>
-                  <FormGroup check>
-                    <Label check>
-                      <Input
-                        type="radio"
-                        name="radio1"
-                        value="12th"
-                        onChange={(e) => setStandard(e.target.value)}
-                      />
-                      12th Standard Student
-                    </Label>
-                  </FormGroup>
-                </Col>
-              </Row>
-              <Row>
-                <div className="update ml-auto mr-auto">
-                  <Button
-                    className="btn-round"
-                    color="primary"
-                    onClick={() =>
-                      addStudent({
-                        firstname,
-                        lastname,
-                        seatno,
-                        gender,
-                        rollno,
-                        standard,
-                        id: uuidv4(),
-                      })
-                    }
+    <div className="content">
+      <Card className="card-user">
+        <CardHeader>
+          <CardTitle tag="h5">Add Student</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <Form action="/tables" onSubmit={onSubmit}>
+            <Row>
+              <Col className="pr-1 pl-1" md="6">
+                <FormGroup>
+                  <label>First Name</label>
+                  <Input
+                    placeholder="Firstname"
+                    type="text"
+                    value={student.firstname}
+                    onChange={onChange}
+                    name="firstname"
+                  />
+                </FormGroup>
+              </Col>
+              <Col className="pl-1 pr-1" md="6">
+                <FormGroup>
+                  <label>Last Name</label>
+                  <Input
+                    placeholder="Last Name"
+                    type="text"
+                    value={student.lastname}
+                    onChange={onChange}
+                    name="lastname"
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="pl-1 pr-1" md="4">
+                <FormGroup>
+                  <label>Select Gender</label>
+                  <Input
+                    defaultValue="Select Gender"
+                    placeholder="Select Gender"
+                    type="select"
+                    value={student.gender}
+                    onChange={onChange}
+                    name="gender"
                   >
-                    Add Student
-                  </Button>
-                </div>
-              </Row>
-            </Form>
-          </CardBody>
-        </Card>
-      </div>
-    </>
+                    <option>Select Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                  </Input>
+                </FormGroup>
+              </Col>
+              <Col className="pl-1 pr-1" md="4">
+                <FormGroup>
+                  <label>Seat Number</label>
+                  <Input
+                    placeholder="Seat Number"
+                    type="number"
+                    value={student.seatno}
+                    onChange={onChange}
+                    name="seatno"
+                  />
+                </FormGroup>
+              </Col>
+              <Col className="pl-1 pr-1" md="4">
+                <FormGroup>
+                  <label>Roll Number</label>
+                  <Input
+                    placeholder="Roll Number"
+                    type="number"
+                    value={student.rollno}
+                    onChange={onChange}
+                    name="rollno"
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="pl-1 pr-1" md="4">
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type="radio"
+                      name="standard"
+                      value="11th"
+                      onChange={onChange}
+                    />
+                    11th Standard Student
+                  </Label>
+                </FormGroup>
+              </Col>
+              <Col>
+                <FormGroup check>
+                  <Label check>
+                    <Input
+                      type="radio"
+                      name="standard"
+                      value="12th"
+                      onChange={onChange}
+                    />
+                    12th Standard Student
+                  </Label>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <div className="update ml-auto mr-auto">
+                <Button
+                  type="submit"
+                  className="btn-round"
+                  color="primary"
+                  disabled={loading}
+                >
+                  {loading ? "Please Wait" : "Add Student"}
+                </Button>
+              </div>
+            </Row>
+            {error && <p className="error">{error}</p>}
+          </Form>
+        </CardBody>
+      </Card>
+    </div>
   );
 }
 
-export default AddUser;
+export default AddStudent;
