@@ -19,7 +19,6 @@
 import DailyAttendance from "views/DailyAttendance";
 import Dashboard from "views/Dashboard.js";
 import StudentList from "views/StudentList.js";
-import AddStudent from "views/AddStudent.js";
 
 var routes = [
   {
@@ -34,13 +33,6 @@ var routes = [
     name: "Daily Attendance",
     icon: "nc-icon nc-badge",
     component: DailyAttendance,
-    layout: "/admin",
-  },
-  {
-    path: "/addstudent",
-    name: "Add Student",
-    icon: "nc-icon nc-single-02",
-    component: AddStudent,
     layout: "/admin",
   },
   {

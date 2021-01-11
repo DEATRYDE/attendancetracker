@@ -1,55 +1,28 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React, { useState } from "react";
-
-// reactstrap components
+import React from "react";
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
+  ModalBody,
   FormGroup,
   Form,
   Input,
   Label,
   Row,
   Col,
+  ModalFooter,
+  Button,
+  Modal,
+  ModalHeader,
 } from "reactstrap";
-import firebase from "firebase/app";
 
-function AddStudent() {
-  const db = firebase.firestore();
-
-  const initialValues = {
-    firstname: "",
-    lastname: "",
-    gender: "",
-    seatno: "",
-    rollno: "",
-    standard: "",
-  };
-
-  const [student, setStudent] = useState({ ...initialValues });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+function StudentForm({
+  loading,
+  onSubmit,
+  student,
+  error,
+  setStudent,
+  toggle,
+  modal,
+  buttonLabel,
+}) {
   const onChange = (e) => {
     setStudent({
       ...student,
@@ -57,33 +30,15 @@ function AddStudent() {
     });
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    console.log(student);
-    setLoading(true);
-    try {
-      const docRef = await db.collection("students").add({
-        ...student,
-        seatno: parseInt(student.seatno),
-        rollno: parseInt(student.rollno),
-      });
-      console.log(docRef.id);
-      setStudent({ ...initialValues });
-    } catch (error) {
-      console.error("An error has occured", error);
-      setError("An error occured while trying to save the student");
-    }
-    setLoading(false);
-  };
-
   return (
-    <div className="content">
-      <Card className="card-user">
-        <CardHeader>
-          <CardTitle tag="h5">Add Student</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <Form action="/tables" onSubmit={onSubmit}>
+    <>
+      <Button outline color="primary text-right" onClick={toggle}>
+        {buttonLabel}
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>Edit Student</ModalHeader>
+        <Form action="/tables" onSubmit={onSubmit}>
+          <ModalBody className="mr-2 ml-2">
             <Row>
               <Col className="pr-1 pl-1" md="6">
                 <FormGroup>
@@ -154,7 +109,7 @@ function AddStudent() {
               </Col>
             </Row>
             <Row>
-              <Col className="pl-1 pr-1" md="4">
+              <Col className="pl-1 pr-1" md="auto">
                 <FormGroup check>
                   <Label check>
                     <Input
@@ -181,24 +136,22 @@ function AddStudent() {
                 </FormGroup>
               </Col>
             </Row>
-            <Row>
-              <div className="update ml-auto mr-auto">
-                <Button
-                  type="submit"
-                  className="btn-round"
-                  color="primary"
-                  disabled={loading}
-                >
-                  {loading ? "Please Wait" : "Add Student"}
-                </Button>
-              </div>
-            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <div className="update ml-auto mr-2">
+              <Button type="submit" color="primary" disabled={loading}>
+                {loading ? "Please Wait" : "Add Student"}
+              </Button>
+              <Button color="secondary" onClick={toggle}>
+                Cancel
+              </Button>
+            </div>
             {error && <p className="error">{error}</p>}
-          </Form>
-        </CardBody>
-      </Card>
-    </div>
+          </ModalFooter>
+        </Form>
+      </Modal>
+    </>
   );
 }
 
-export default AddStudent;
+export default StudentForm;

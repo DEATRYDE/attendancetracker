@@ -16,42 +16,21 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 // reactstrap components
-import firebase from "firebase/app";
 import StudentsTable from "../components/CustomComponents/StudentTable";
+import { ToasterProvider } from "../components/CustomComponents/ToasterContext";
+import AddStudent from "../components/CustomComponents/AddStudent";
 
 function StudentList() {
-  const [students, setStudents] = useState([]);
-
-  const db = firebase.firestore();
-
-  function getStudents() {
-    (async () => {
-      const snapshot = await db.collection("students").get();
-      const studentsArray = [];
-      snapshot.forEach((doc) => {
-        studentsArray.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
-      setStudents(studentsArray);
-    })();
-  }
-
-  useEffect(() => {
-    getStudents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <>
-      <div className="content">
-        <StudentsTable students={students} />
-      </div>
-    </>
+    <div className="content">
+      <ToasterProvider>
+        <AddStudent />
+        <StudentsTable />
+      </ToasterProvider>
+    </div>
   );
 }
 
