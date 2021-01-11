@@ -53,13 +53,12 @@ function AddStudent() {
         rollno: parseInt(student.rollno),
       });
       console.log(docRef.id);
-      setStudent({ ...initialValues });
       toggle();
       addToast({ text: "Successfully created a new student", type: "success" });
-    } catch (error) {
+    } catch (e) {
       setError("An error occured while trying to save the student");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

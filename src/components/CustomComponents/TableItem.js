@@ -4,7 +4,7 @@ import { Button } from "reactstrap";
 import firebase from "firebase/app";
 import { ToasterContext } from "./ToasterContext";
 
-function TableItems({ student }) {
+function TableItems({ student, id }) {
   const [loading, setLoading] = useState(false);
 
   const db = firebase.firestore();
@@ -31,7 +31,7 @@ function TableItems({ student }) {
             <td>{student.gender}</td>
             <td>{student.rollno}</td>
             <td className="text-center">
-              <EditStudent key={student.id} id={student.id} />
+              <EditStudent id={id} student={student} />
             </td>
             <td className="text-center">
               <Button

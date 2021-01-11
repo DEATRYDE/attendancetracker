@@ -32,7 +32,7 @@ function StudentForm({
 
   return (
     <>
-      <Button outline color="primary text-right" onClick={toggle}>
+      <Button className="btn-round" color="primary text-right" onClick={toggle}>
         {buttonLabel}
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
@@ -140,7 +140,7 @@ function StudentForm({
           <ModalFooter>
             <div className="update ml-auto mr-2">
               <Button type="submit" color="primary" disabled={loading}>
-                {loading ? "Please Wait" : "Add Student"}
+                {loading ? "Please Wait" : "Save"}
               </Button>
               <Button color="secondary" onClick={toggle}>
                 Cancel

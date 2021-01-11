@@ -13,7 +13,7 @@ const ToasterProvider = (props) => {
     setToasts((prevToasts) => [text, ...prevToasts]);
     setTimeout(() => {
       setToasts((prevToasts) => prevToasts.slice(0, prevToasts.length - 1));
-    }, 3000);
+    }, 4000);
   };
 
   return (

@@ -1,158 +1,77 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-} from "reactstrap";
+/*!
+
+=========================================================
+* Paper Dashboard React - v1.2.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
+* Copyright 2020 Creative Tim (https://www.creative-tim.com)
+
+* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+import React, { useState } from "react";
+
+// reactstrap components
 import firebase from "firebase/app";
 import { ToasterContext } from "./ToasterContext";
+import StudentForm from "./StudentForm";
 
-function EditStudent(id) {
-  const [student, setStudent] = useState([]);
+function EditStudent(props) {
+  const db = firebase.firestore();
 
+  const [student, setStudent] = useState({
+    firstname: props.student.firstname,
+    lastname: props.student.lastname,
+    gender: props.student.gender,
+    seatno: props.student.seatno,
+    rollno: props.student.rollno,
+    standard: props.student.standard,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [modal, setModal] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const docRef = await firebase
-          .firestore()
-          .collection("students")
-          .doc(id);
-        const doc = await docRef.get();
-        console.log(doc);
-        setStudent(doc.data());
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  });
-
-  // const onChange = (e) => {
-  //   setStudent({
-  //     ...student,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
-
   const toggle = () => setModal(!modal);
+
+  const onSubmit = async (addToast, e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await db
+        .collection("students")
+        .doc(props.id)
+        .set(
+          {
+            ...student,
+            seatno: parseInt(student.seatno),
+            rollno: parseInt(student.rollno),
+          },
+          { merge: true }
+        );
+      toggle();
+      addToast({ text: "Successfully updated the student", type: "success" });
+    } catch (error) {
+      setError("An error occured while trying to update the student");
+    }
+    setLoading(false);
+  };
 
   return (
     <ToasterContext.Consumer>
       {({ addToast }) => (
         <>
-          <Button className="btn-round" color="primary" onClick={toggle}>
-            Edit
-          </Button>
-          <Modal isOpen={modal} toggle={toggle}>
-            <ModalHeader toggle={toggle}>Edit Student</ModalHeader>
-            <ModalBody>
-              <Form action="/tables" onSubmit={toggle}>
-                <Row>
-                  <Col className="pr-1 pl-1" md="6">
-                    <FormGroup>
-                      <label>{student.firstname}</label>
-                      <Input
-                        placeholder="Firstname"
-                        type="text"
-                        name="firstname"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-1 pr-1" md="6">
-                    <FormGroup>
-                      <label>Last Name</label>
-                      <Input
-                        placeholder="Last Name"
-                        type="text"
-                        name="lastname"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="pl-1 pr-1" md="4">
-                    <FormGroup>
-                      <label>Select Gender</label>
-                      <Input
-                        defaultValue="Select Gender"
-                        placeholder="Select Gender"
-                        type="select"
-                        name="gender"
-                      >
-                        <option>Select Gender</option>
-                        <option>Male</option>
-                        <option>Female</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-1 pr-1" md="4">
-                    <FormGroup>
-                      <label>Seat Number</label>
-                      <Input
-                        placeholder="Seat Number"
-                        type="number"
-                        name="seatno"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-1 pr-1" md="4">
-                    <FormGroup>
-                      <label>Roll Number</label>
-                      <Input
-                        placeholder="Roll Number"
-                        type="number"
-                        name="rollno"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="pl-1 pr-1" md="6">
-                    <FormGroup check>
-                      <Label check>
-                        <Input type="radio" name="standard" value="11th" />
-                        11th Standard Student
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-1 pr-1" md="6">
-                    <FormGroup check>
-                      <Label check>
-                        <Input type="radio" name="standard" value="12th" />
-                        12th Standard Student
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </Form>
-            </ModalBody>
-            <ModalFooter>
-              <tr>
-                <td className="text-center">
-                  <Button
-                    type="submit"
-                    className="btn-round"
-                    color="primary"
-                    onClick={() => addToast("Toast")}
-                  >
-                    Edit
-                  </Button>
-                </td>
-              </tr>
-              <Button className="btn-round" color="secondary" onClick={toggle}>
-                Cancel
-              </Button>
-            </ModalFooter>
-          </Modal>
+          <StudentForm
+            {...{ loading, student, setStudent, error, toggle, modal }}
+            onSubmit={onSubmit.bind(this, addToast)}
+            buttonLabel="Edit"
+          />
         </>
       )}
     </ToasterContext.Consumer>
