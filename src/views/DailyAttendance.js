@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DisplayCard from "../components/CustomComponents/DisplayCard";
 import firebase from "firebase/app";
+import CustomDatePicker from "components/CustomComponents/DatePicker";
 
 const DailyAttendance = () => {
   const [dates, setDates] = useState([]);
@@ -9,36 +10,34 @@ const DailyAttendance = () => {
 
   function getDates() {
     ref.onSnapshot((querySnapshot) => {
-      const students = [];
+      const dateArray = [];
       querySnapshot.forEach((doc) => {
-        students.push(doc.data());
+        dateArray.push(doc.data());
       });
-      setDates(students);
-      return students;
+      console.log(dateArray);
+      setDates(dateArray);
+      return dateArray;
     });
   }
 
   useEffect(() => {
     getDates();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div>
-      <br />
-      <br />
-      <br />
-      <div>
-        {dates.map((date) => (
-          <div>
-            <DisplayCard
-              id={date.id}
-              name={date.name}
-              lectureColor={date.lecture}
-              practicalColor={date.practical}
-            ></DisplayCard>
-          </div>
-        ))}
-      </div>
+    <div className="content">
+      <CustomDatePicker />
+      {dates.map((date) => (
+        <div key={date.id}>
+          <DisplayCard
+            id={date.id}
+            name={date.name}
+            lectureColor={date.lecture}
+            practicalColor={date.practical}
+          ></DisplayCard>
+        </div>
+      ))}
     </div>
   );
 };

@@ -49,7 +49,11 @@ function StudentsTable() {
               {!students.length
                 ? "Loading Students"
                 : students.map((student) => (
-                    <TableItem student={student} id={student.id}></TableItem>
+                    <TableItem
+                      key={student.id}
+                      student={student}
+                      id={student.id}
+                    ></TableItem>
                   ))}
             </tbody>
           </Table>
